@@ -60,6 +60,30 @@ def download_python():
             zip_path.unlink()
     print("[+] Python environment ready.")
 
+def configure_python():
+    """Configure the Windows Embeddable Python to include lib/ and root paths."""
+    print(f"[*] Configuring Python .pth file...")
+    # Find the .pth file (e.g., python312._pth)
+    pth_files = list(PYTHON_DIR.glob("*._pth"))
+    if not pth_files:
+        print(f"[!] Warning: No .pth file found in {PYTHON_DIR}")
+        return
+    
+    pth_file = pth_files[0]
+    major_minor = "".join(PYTHON_VERSION.split(".")[:2])
+    with open(pth_file, 'w') as f:
+        # Standard paths
+        f.write(f"python{major_minor}.zip\n")
+        f.write(".\n")
+        # Add lib and root paths relative to the python/ directory
+        f.write("../lib\n")
+        f.write("..\n")
+        # Enable site-packages (allows PYTHONPATH and site module to work)
+        f.write("\n# Enable site module\n")
+        f.write("import site\n")
+    
+    print(f"[+] Configured {pth_file.name}")
+
 def install_dependencies():
     """Install dependencies from requirements.txt into the lib/ folder."""
     print(f"[*] Installing dependencies to {LIB_DIR}...")
@@ -108,6 +132,7 @@ def main():
     try:
         setup_directories()
         download_python()
+        configure_python()
         install_dependencies()
         copy_app_files()
         print("\n[SUCCESS] Portable build complete!")
