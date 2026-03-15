@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# NIS2 Field Audit Tool CLI Entry Point
+# Uncle-friendly single-command experience
+#
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Use virtual environment if available
+if [ -d "$APP_DIR/.venv" ]; then
+    PYTHON_EXE="$APP_DIR/.venv/bin/python3"
+else
+    PYTHON_EXE="python3"
+fi
+
+# Run the app
+if [ $# -eq 0 ]; then
+    # Default to TUI
+    exec "$PYTHON_EXE" "$APP_DIR/run.py"
+else
+    # Check for --server flag to run just the JSON-RPC server
+    if [[ "$1" == "--server" ]]; then
+        cd "$APP_DIR"
+        exec "$PYTHON_EXE" -u -m app.jsonrpc_server
+    # Handle dashboard/tui command
+    elif [[ "$1" == "dashboard" || "$1" == "tui" ]]; then
+        shift
+        exec "$PYTHON_EXE" "$APP_DIR/run.py" "$@"
+    else
+        # Run the CLI with args
+        cd "$APP_DIR"
+        exec "$PYTHON_EXE" -m app.cli "$@"
+    fi
+fi

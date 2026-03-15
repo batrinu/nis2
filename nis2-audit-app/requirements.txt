@@ -1,0 +1,30 @@
+# NIS2 Field Audit App - Requirements
+
+# Core dependencies
+pydantic>=2.0.0
+python-dateutil>=2.8.0
+
+# CLI and TUI
+typer>=0.9.0
+rich>=13.0.0
+textual>=0.50.0
+
+# Network scanning (Batch 2)
+# python-nmap>=0.7.1
+
+# Device connector (Batch 3)
+# SECURITY: paramiko>=3.4.0 fixes Terrapin attack (CVE-2023-48795)
+netmiko>=4.3.0
+paramiko>=3.4.0
+cryptography>=42.0.0
+textfsm>=1.2.0
+
+# Report generation (Batch 5)
+jinja2>=3.1.0
+markdown>=3.5.0
+
+# Development dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+mypy>=1.0.0

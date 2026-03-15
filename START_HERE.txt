@@ -1,0 +1,30 @@
+================================================================================
+                    NIS2 FIELD AUDIT TOOL - WELCOME!
+================================================================================
+
+Hi there! This tool helps you perform cybersecurity audits for NIS2 compliance.
+
+WHAT YOU NEED:
+  • Python 3.10 or newer (most computers have this)
+  • No technical knowledge required!
+
+GET STARTED IN 3 STEPS:
+
+1. WINDOWS: Double-click START.bat
+   MAC/LINUX: Double-click START.sh (or run in terminal)
+
+2. The first time: Wait for setup to complete (1-2 minutes)
+
+3. Follow the on-screen wizard to set up your first audit
+
+NEED HELP?
+  • Press F1 at any time in the app for help
+  • See QUICKSTART.md for detailed instructions with pictures
+  • Check README.md for technical details
+
+ACCESSIBILITY:
+  • High contrast mode available
+  • Keyboard-only navigation supported
+  • Screen reader compatible
+
+================================================================================

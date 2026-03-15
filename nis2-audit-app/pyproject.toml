@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nis2-field-audit"
+version = "0.1.0"
+description = "On-site NIS2 compliance audit tool"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "NIS2 Audit Team"},
+]
+keywords = ["nis2", "compliance", "audit", "cybersecurity"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Information Technology",
+    "Topic :: Security",
+    "Topic :: System :: Networking",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "python-dateutil>=2.8.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "textual>=0.50.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "mypy>=1.0.0",
+]
+scan = [
+    "python-nmap>=0.7.1",
+]
+connect = [
+    "netmiko>=4.3.0",
+    "textfsm>=1.2.0",
+]
+reports = [
+    "jinja2>=3.1.0",
+    "markdown>=3.5.0",
+]
+
+[project.scripts]
+nis2-audit = "app.textual_app:main"
+nis2-audit-cli = "app.cli:cli_entry"
+nis2-audit-server = "app.jsonrpc_server:main"
+
+[project.urls]
+Homepage = "https://github.com/example/nis2-field-audit"
+Repository = "https://github.com/example/nis2-field-audit"
+Issues = "https://github.com/example/nis2-field-audit/issues"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["tui/*.css"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
