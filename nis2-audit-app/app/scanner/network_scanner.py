@@ -339,7 +339,7 @@ class NmapScanner:
             if host is not None
         ]
     
-    def _parse_host_element(self, host_elem: ET.Element) -> Optional[DiscoveredHost]:
+    def _parse_host_element(self, host_elem: "Element") -> Optional[DiscoveredHost]:
         """Parse a single host element from nmap XML."""
         # Check if host is up
         status = host_elem.find("status")
@@ -390,7 +390,7 @@ class NmapScanner:
         
         return host
     
-    def _parse_port_element(self, port_elem: ET.Element, host: DiscoveredHost) -> None:
+    def _parse_port_element(self, port_elem: "Element", host: DiscoveredHost) -> None:
         """Parse a port element and update host."""
         port_id = port_elem.get("portid")
         if not port_id:
@@ -411,7 +411,7 @@ class NmapScanner:
             if service_elem is not None:
                 host.port_services[port_num] = service_elem.get("name", "unknown")
     
-    def _parse_os_element(self, os_elem: ET.Element, host: DiscoveredHost) -> None:
+    def _parse_os_element(self, os_elem: "Element", host: DiscoveredHost) -> None:
         """Parse OS detection element."""
         # Get the most likely OS match
         osmatch = os_elem.find("osmatch")
