@@ -7,6 +7,7 @@ import shutil
 import subprocess
 from pathlib import Path
 from typing import Tuple
+from .config import is_portable_mode, get_data_directory
 
 
 class StartupError(Exception):
@@ -59,6 +60,19 @@ def check_terminal_size(min_cols: int = 80, min_rows: int = 24) -> Tuple[bool, i
     except Exception:
         # If we can't determine size, assume it's okay
         return True, 80, 24
+
+
+def check_write_permissions(directory: Path) -> bool:
+    """Check if the directory is writable."""
+    try:
+        # Ensure directory exists first
+        directory.mkdir(parents=True, exist_ok=True)
+        test_file = directory / ".write_test"
+        test_file.touch()
+        test_file.unlink()
+        return True
+    except (IOError, PermissionError):
+        return False
 
 
 def format_python_not_found_error() -> str:
@@ -134,6 +148,40 @@ def format_terminal_too_small_error(cols: int, rows: int, min_cols: int = 80, mi
 ║       • Or drag window edges to resize                                       ║
 ║                                                                              ║
 ║  After resizing, run START.bat (Windows) or START.sh (Mac/Linux) again.      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+"""
+
+
+def format_write_permission_error(directory: Path) -> str:
+    """Format a friendly error message for write permission issues."""
+    return f"""
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  🔴 Write Permission Denied                                                  ║
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  The application cannot write to the required data directory:                ║
+║                                                                              ║
+║  📂 {str(directory):<74} ║
+║                                                                              ║
+║  This is required for Portable Mode to store your audit data.                ║
+║                                                                              ║
+║  🛠️  How to fix:                                                           ║
+║                                                                              ║
+║     1. Move the application folder                                           ║
+║        • Try moving the 'nis2' folder to your Documents or Desktop           ║
+║        • Avoid 'Program Files' or other system folders                       ║
+║                                                                              ║
+║     2. Run as Administrator                                                  ║
+║        • Right-click START.bat → "Run as administrator"                     ║
+║                                                                              ║
+║     3. Check folder permissions                                              ║
+║        • Right-click the folder → Properties → Security                      ║
+║        • Ensure your user has "Full control"                                 ║
+║                                                                              ║
+║  After fixing, run START.bat (Windows) or START.sh (Mac/Linux) again.        ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
@@ -287,6 +335,12 @@ def perform_startup_checks() -> None:
     size_ok, cols, rows = check_terminal_size()
     if not size_ok:
         raise StartupError(format_terminal_too_small_error(cols, rows))
+
+    # Task 2: Implement Write Permission Checks
+    if is_portable_mode():
+        data_dir = get_data_directory()
+        if not check_write_permissions(data_dir):
+            raise StartupError(format_write_permission_error(data_dir))
 
 
 def is_first_run(config_dir: str = "~/.nis2-audit") -> bool:
