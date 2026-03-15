@@ -103,8 +103,32 @@ class AppConfig:
     # All secrets are retrieved via SecretsManager.get_secret(name)
 
 
+def is_portable_mode() -> bool:
+    """Check if the app is running in portable mode."""
+    # Check if we are running from a 'python' subdirectory in the app root
+    # or if a '.portable' marker file exists.
+    try:
+        app_root = Path(sys.executable).parent.parent
+        return (app_root / "python").exists() or (app_root / ".portable").exists()
+    except Exception:
+        return False
+
+
+def get_portable_data_directory() -> Path:
+    """Get the data directory for portable mode."""
+    app_root = Path(sys.executable).parent.parent
+    data_dir = app_root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
+
 def get_config_directory() -> Path:
     """Get the platform-appropriate config directory."""
+    if is_portable_mode():
+        config_dir = get_portable_data_directory() / 'config'
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir
+
     if os.name == 'nt':  # Windows
         base_dir = Path(os.environ.get('APPDATA') or Path.home() / 'AppData/Roaming')
     elif sys.platform == 'darwin':  # macOS
@@ -119,6 +143,9 @@ def get_config_directory() -> Path:
 
 def get_data_directory() -> Path:
     """Get the platform-appropriate data directory."""
+    if is_portable_mode():
+        return get_portable_data_directory()
+
     if os.name == 'nt':  # Windows
         base_dir = Path(os.environ.get('LOCALAPPDATA') or Path.home() / 'AppData/Local')
     elif sys.platform == 'darwin':  # macOS
