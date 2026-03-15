@@ -49,3 +49,4 @@ output/
 reports/
 *.json
 !shared/data/*.json
+.worktrees/
