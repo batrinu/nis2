@@ -61,6 +61,17 @@ audit = orch.run_audit(session_id)
 print(audit["audit_result"]["overall_score"])
 ```
 
+## Documentation
+
+The project documentation is centralized in the [docs/](docs/) directory:
+
+- 📖 **[User Guides](docs/guides/USER_QUICKSTART.md)** — QuickStart, Windows Setup, and Audit workflow.
+- 🛠️ **[Developer Guide](docs/guides/DEVELOPER_GUIDE.md)** — Architecture, TUI components, and internal structure.
+- 📊 **[Reports & Summaries](docs/reports/)** — Code audits, accessibility reports, and security fix summaries.
+- 📐 **[Technical Specs](docs/specs/)** — Detailed agent and orchestrator specifications.
+- 🛡️ **[Security Hardening](docs/security/SECURITY.md)** — Details on the 32 security passes and 2026 vulnerability protections.
+- 📅 **[Implementation Plans](docs/plans/)** — Design documents and archived implementation roadmaps.
+
 ## Architecture
 
 ```
@@ -210,9 +221,6 @@ This application implements **32 security hardening passes** with production-gra
 - Path traversal protection on all file operations (CVE-2026-28518)
 - CIDR validation to prevent /0 internet-wide scans
 - Regex timeout protection (Pass 11, CVE-2026-26006)
-
-### Security Documentation
-See [SECURITY.md](SECURITY.md) for detailed information on all 32 security passes.
 
 ## Legal Disclaimer
 
