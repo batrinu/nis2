@@ -91,14 +91,29 @@ def install_dependencies():
         print(f"[!] Requirements file not found: {REQUIREMENTS_FILE}")
         return
 
-    try:
-        # Use sys.executable to ensure we use the same pip as the current environment
-        subprocess.check_call([
-            sys.executable, "-m", "pip", "install",
-            "--target", str(LIB_DIR),
-            "-r", str(REQUIREMENTS_FILE),
-            "--no-cache-dir"
+    # Check if we're on Windows. If not, we MUST target it explicitly.
+    is_windows = sys.platform == "win32"
+    
+    pip_command = [
+        sys.executable, "-m", "pip", "install",
+        "--target", str(LIB_DIR),
+        "-r", str(REQUIREMENTS_FILE),
+        "--no-cache-dir"
+    ]
+
+    if not is_windows:
+        print("[*] Non-Windows environment detected. Targeting Windows AMD64...")
+        # Get major.minor version (e.g., '3.12')
+        py_version = ".".join(PYTHON_VERSION.split(".")[:2])
+        pip_command.extend([
+            "--platform", "win_amd64",
+            "--python-version", py_version,
+            "--only-binary=:all:"
         ])
+        print(f"[*] Using pip flags: --platform win_amd64 --python-version {py_version} --only-binary=:all:")
+
+    try:
+        subprocess.check_call(pip_command)
     except subprocess.CalledProcessError as e:
         print(f"[!] Failed to install dependencies: {e}")
         raise
