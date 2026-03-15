@@ -19,6 +19,21 @@ from .security_utils import atomic_write, secure_file_permissions
 
 logger = logging.getLogger(__name__)
 
+# Constants for portable mode
+PORTABLE_MARKER = ".portable"
+PORTABLE_PYTHON_DIR = "python"
+PORTABLE_DATA_DIR = "data"
+
+
+def _get_app_root() -> Path:
+    """Get the application root directory."""
+    try:
+        # In a typical Windows distribution, the executable is in bin/ or similar,
+        # and we want the root directory.
+        return Path(sys.executable).parent.parent
+    except Exception:
+        return Path.cwd()
+
 
 @dataclass
 class DatabaseConfig:
@@ -108,16 +123,16 @@ def is_portable_mode() -> bool:
     # Check if we are running from a 'python' subdirectory in the app root
     # or if a '.portable' marker file exists.
     try:
-        app_root = Path(sys.executable).parent.parent
-        return (app_root / "python").exists() or (app_root / ".portable").exists()
+        app_root = _get_app_root()
+        return (app_root / PORTABLE_PYTHON_DIR).exists() or (app_root / PORTABLE_MARKER).exists()
     except Exception:
         return False
 
 
 def get_portable_data_directory() -> Path:
     """Get the data directory for portable mode."""
-    app_root = Path(sys.executable).parent.parent
-    data_dir = app_root / "data"
+    app_root = _get_app_root()
+    data_dir = app_root / PORTABLE_DATA_DIR
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir
 
