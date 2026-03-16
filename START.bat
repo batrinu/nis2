@@ -11,6 +11,10 @@ REM   3. Installs required packages
 REM   4. Launches the application
 REM ==============================================================================
 
+REM Set UTF-8 code page for proper Romanian character support
+REM This ensures diacritics (ăâîșț) display correctly
+chcp 65001 >nul 2>&1
+
 title NIS2 Field Audit Tool
 
 echo ========================================
@@ -81,6 +85,16 @@ for /f "tokens=*" %%a in ('%PYTHON_CMD% --version 2^>^&1') do set PYTHON_VERSION
 echo [OK] Found %PYTHON_VERSION%
 echo.
 
+REM Check if we're in Windows PowerShell ISE (which doesn't support interactive console apps)
+if defined PSISE (
+    echo [WARNING] You are running in PowerShell ISE
+    echo PowerShell ISE does not support interactive console applications.
+    echo Please run START.bat from regular Command Prompt or PowerShell console.
+    echo.
+    pause
+    exit /b 1
+)
+
 REM ============================================================================
 REM Step 2: Check/Create Virtual Environment
 REM ============================================================================
@@ -141,14 +155,27 @@ REM Step 3: Check Terminal Size
 REM ============================================================================
 
 REM Get terminal size using PowerShell
-for /f "usebackq tokens=*" %%a in (`powershell -Command "($Host.UI.RawUI.WindowSize.Width, $Host.UI.RawUI.WindowSize.Height) -join ','"`) do (
+for /f "usebackq tokens=*" %%a in (`powershell -Command "($Host.UI.RawUI.WindowSize.Width, $Host.UI.RawUI.WindowSize.Height) -join ','" 2^>nul`) do (
     for /f "tokens=1,2 delims=," %%w in ("%%a") do (
         set "TERM_WIDTH=%%w"
-        set "TERM_HEIGHT=%%h"
+        set "TERM_HEIGHT=%%x"
     )
 )
 
+REM Fallback: if PowerShell failed, try mode con
+if not defined TERM_HEIGHT (
+    for /f "tokens=2 delims=: " %%a in ('mode con ^| findstr "Lines:"') do set "TERM_HEIGHT=%%a"
+    for /f "tokens=2 delims=: " %%a in ('mode con ^| findstr "Columns:"') do set "TERM_WIDTH=%%a"
+    REM Remove leading space
+    set "TERM_HEIGHT=!TERM_HEIGHT: =!"
+    set "TERM_WIDTH=!TERM_WIDTH: =!"
+)
+
 REM Check minimum size (80x24)
+REM Note: If variables are still not set, assume we're okay and continue
+if not defined TERM_WIDTH set "TERM_WIDTH=120"
+if not defined TERM_HEIGHT set "TERM_HEIGHT=30"
+
 if %TERM_WIDTH% LSS 80 (
     echo [WARNING] Terminal window is too narrow
     echo Current: %TERM_WIDTH% columns
@@ -179,7 +206,37 @@ echo [INFO] Starting NIS2 Field Audit Tool...
 echo.
 
 cd /d "%APP_DIR%"
+
+REM Activate virtual environment
+REM Note: Using 'call' is crucial - without it, the script would exit after activation
 call .venv\Scripts\activate.bat
+if errorlevel 1 (
+    echo [ERROR] Failed to activate virtual environment
+    echo.
+    echo This might be caused by:
+    echo 1. Antivirus software blocking the activation script
+    echo 2. Corrupted virtual environment
+    echo.
+    echo Try these solutions:
+    echo 1. Temporarily disable antivirus or add exception for this folder
+    echo 2. Delete the .venv folder and run START.bat again
+    echo 3. Run as Administrator
+    echo.
+    pause
+    exit /b 1
+)
+
+REM Verify that we're actually in the virtual environment
+REM by checking if the python.exe path contains .venv
+for /f "delims=" %%i in ('where python') do set "PYTHON_PATH=%%i"
+echo [DEBUG] Using Python: !PYTHON_PATH!
+if not defined PYTHON_PATH (
+    echo [WARNING] Could not verify Python path. Continuing anyway...
+)
+
+REM Set environment variable to help Rich/Textual detect Windows terminal
+set "PYTHONIOENCODING=utf-8"
+set "FORCE_COLOR=1"
 
 REM Run the app
 python -m app.textual_app
@@ -204,7 +261,14 @@ if %EXIT_CODE% neq 0 (
     echo 2. Check that your antivirus isn't blocking the app
     echo 3. Run as Administrator
     echo.
+    echo If the app crashed immediately, this might help:
+    echo - Make sure your terminal supports Unicode (UTF-8)
+    echo - Try running from Windows Terminal instead of CMD
+    echo.
     pause
 )
+
+REM Restore original code page on exit
+chcp 437 >nul 2>&1
 
 exit /b %EXIT_CODE%
