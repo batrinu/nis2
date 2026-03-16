@@ -212,6 +212,21 @@ Before considering the experience complete, verify:
 - SSH-friendly (no mouse required)
 - Copy-paste friendly output
 
+### Windows Terminal Support
+
+**Recommended for Windows Users:**
+- ✅ **Windows Terminal** (download from Microsoft Store) - Best experience
+- ✅ **Command Prompt (CMD)** - Fully supported
+- ✅ **PowerShell** - Fully supported
+- ❌ **PowerShell ISE** - Not supported (shows helpful error message)
+
+**Windows-Specific Features:**
+- Automatic UTF-8 code page setup for Romanian characters (ăâîșț)
+- Automatic terminal size detection with helpful error messages
+- Color support via `FORCE_COLOR` environment variable
+- Desktop shortcut creation
+- Visual C++ Redistributable check and auto-install
+
 ### Accessibility
 - Full keyboard navigation
 - Screen reader optimized
@@ -233,6 +248,15 @@ Designed with ❤️ for security professionals and their non-technical colleagu
 ---
 
 ## 📝 Version History
+
+**v1.0.1** - Windows Improvements (March 2026)
+- Fixed terminal size detection bug on Windows (`%%h` → `%%x`)
+- Added UTF-8 support for Romanian characters (ăâîșț)
+- Added PowerShell ISE detection with helpful error
+- Added `FORCE_COLOR` for better colors on Windows
+- Added `mode con` fallback for terminal size detection
+- Added antivirus guidance in error messages
+- Created professional EXE installer
 
 **v1.0.0** - Initial Release
 - All 21 loops of polish complete

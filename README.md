@@ -12,6 +12,8 @@ Located in `nis2-audit-app/`, this is a cross-platform terminal application for 
 - **Network Discovery**: Built-in nmap-based scanning to inventory devices.
 - **SSH Interrogation**: Connect to devices (Cisco, Linux, etc.) to gather configuration evidence.
 - **Portable Distribution**: A "Zero-Install" Windows version is available (no Python required).
+- **Professional Windows Installer**: EXE setup wizard with dependency auto-install.
+- **Windows Optimized**: Full UTF-8 support for Romanian, terminal size auto-detection, color support.
 - **[Go to Field Audit Tool Guide](docs/guides/USER_QUICKSTART.md)**
 
 ### 2. NIS2 Assessment Engine (Multi-Agent Backend)
@@ -28,6 +30,8 @@ All documentation is centralized in the [docs/](docs/) directory:
 
 - 🏁 **[User QuickStart](docs/guides/USER_QUICKSTART.md)** — Start your first audit in minutes.
 - 🪟 **[Windows Setup](docs/guides/WINDOWS_SETUP.md)** — Detailed instructions for Windows users.
+- 📦 **[Windows EXE Installer](docs/guides/WINDOWS_INSTALLER.md)** — Professional installer creation guide.
+- 👨‍💼 **[Uncle Experience Guide](docs/guides/UNCLE_EXPERIENCE.md)** — Designed for non-technical users.
 - 🛠️ **[Developer Guide](docs/guides/DEVELOPER_GUIDE.md)** — Architecture and internal TUI components.
 - 📊 **[Reports & Summaries](docs/reports/)** — Security audits and accessibility summaries.
 - 📐 **[Technical Specs](docs/specs/ORCHESTRATOR_SPEC.md)** — Agent and orchestrator specifications.
