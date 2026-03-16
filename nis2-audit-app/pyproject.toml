@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nis2-field-audit"
-version = "0.1.0"
+version = "1.0.2"
 description = "On-site NIS2 compliance audit tool"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -53,9 +53,7 @@ reports = [
 ]
 
 [project.scripts]
-nis2-audit = "app.textual_app:main"
-nis2-audit-cli = "app.cli:cli_entry"
-nis2-audit-server = "app.jsonrpc_server:main"
+nis2-audit = "app.main:main"
 
 [project.urls]
 Homepage = "https://github.com/example/nis2-field-audit"
